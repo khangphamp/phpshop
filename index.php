@@ -15,6 +15,15 @@
     
 </head>
 <style>
+.btn-comment-mutipal{
+    position: absolute;
+    left: 0;
+    font-size: 8px;
+    top: 30px;
+}
+.box_user_comment_warp{
+  position:relative;
+}
 .pagination {
     display: flex;
     justify-content: center;
@@ -31,6 +40,37 @@
 }
 .pagination .remove {
     display: none;
+}
+
+.rating-css div {
+  color: #ffe400;
+  font-size: 30px;
+  font-family: sans-serif;
+  font-weight: 800;
+  text-transform: uppercase;
+  padding: 20px 0;
+}
+.rating-css.a div {
+    color: red;
+}
+.rating-css input {
+  display: none;
+}
+.rating-css input + label {
+  font-size: 20px;
+  text-shadow: 1px 1px 0 #ffe400;
+  cursor: pointer;
+}
+.rating-css.a input + label {
+  font-size: 15px;
+  cursor: none;
+}
+.rating-css input:checked + label ~ label {
+  color: #838383;
+}
+.rating-css label:active {
+  transform: scale(0.8);
+  transition: 0.3s ease;
 }
 </style>
 <body>

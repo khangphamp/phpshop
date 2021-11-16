@@ -14,20 +14,32 @@
                         <!-- cac phan san pham chinh theo ten -->
 <!-- phan trang -->
 <?php 
-    $seach ='';
+    $search ='';
     $mdPage = new Page();
     $limit = 12;
  
     $start = $mdPage -> firstStart($limit);
     $products = new Home();
-    if(isset($_POST['search'])){
-        $result = $products->getAll($_POST['search']);
-        $count = $result->rowCount();
-        $seach = $_POST['search'];
-    // tra ve  so dong
-        $pro =$products -> getPagination($start,$limit,$_POST['search']);    
+    if(isset($_POST['search'])||isset($_GET['search'])){
+
+        if(isset($_POST['search'])){
+            $result = $products->getAll($_POST['search']);
+            $count = $result->rowCount();
+            $search = $_POST['search'];
+        // tra ve  so dong
+            $pro =$products -> getPagination($start,$limit,$_POST['search']);    
+        }
+        else {
+            $result = $products->getAll($_GET['search']);
+            $count = $result->rowCount();
+            $search = $_GET['search'];
+        // tra ve  so dong
+            $pro =$products -> getPagination($start,$limit,$_GET['search']);    
+        }
+       
     }
     else{
+ 
         $result = $products->getAll();
         $count = $result->rowCount();
         // tra ve  so dong
@@ -124,11 +136,11 @@
                                 </div>
             </div> 
             <div style="text-align:center" class="pagination">
-                     <a class="<?php echo $_GET['page'] == 1 ? 'remove' : ''?>" href="index.php?action=home&seach=<?php echo $seach ?>&page=<?php echo $_GET['page']-1; ?>">&raquo;</a>
+                     <a class="<?php echo $_GET['page'] == 1 ? 'remove' : ''?>" href="index.php?action=home&search=<?php echo $search ?>&page=<?php echo $_GET['page']-1; ?>">&raquo;</a>
                 <?php for($i=1;$i<=$page;$i++): ?>    
-                    <a class="<?php echo $_GET['page'] == $i ? 'active':''?>" href="index.php?action=home&seach=<?php echo $seach ?>&page=<?php echo $i ?>"><?php echo $i; ?></a>
+                    <a class="<?php echo $_GET['page'] == $i ? 'active':''?>" href="index.php?action=home&search=<?php echo $search ?>&page=<?php echo $i ?>"><?php echo $i; ?></a>
                 <?php endfor; ?>
-                    <a class="<?php echo $_GET['page'] == $page-1 ? 'remove' : ''?>" href="index.php?action=home&seach=<?php echo $seach ?>&page=<?php echo $_GET['page']+1; ?>">&raquo;</a>
+                    <a class="<?php echo $_GET['page'] == $page ? 'remove' : ''?>" href="index.php?action=home&search=<?php echo $search ?>&page=<?php echo $_GET['page']+1; ?>">&raquo;</a>
             </div>
               <!-- end -->
                      </div>

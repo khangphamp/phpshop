@@ -9,9 +9,11 @@
     $favorite = false;
     if(isset($_SESSION['id'])){
         $favorite = $md -> getFavoriteDetail($_GET['id'],$_SESSION['id']);
-        
+        $userComment = $md -> getUserComment($_SESSION['id'],$_GET['id']);
+   
     }
     $comments = $md -> getComment($_GET['id']);
+    $rating = $md -> getRating($_GET['id']);
     function handleTime($ss) {
         $m = ceil($ss/60);
         $h = ceil($ss/3600);
@@ -258,19 +260,43 @@
                     <div class="col p-9 t-12 m-12">
                         <div class="box box_detail-coment-address">
                             <div class="box_detail">
+       
+    
         <?php if(isset($_SESSION['id'])): ?>
+        <?php if($userComment != true): ?>
         <form action="index.php?action=product&act=addcomment&id=<?php echo $product['id']?>" method="post">                   
             <textarea required="required" name="comment" type="text" class="input" placeholder="Write a comment"></textarea>
-          <button  type="submit">Comment</button>
+      
+          <div class="rating-css">
+            <div class="star-icon">
+                <input type="radio" value="1" name="rating" id="rating1">
+                <label for="rating1"  class="fa fa-star"></label>
+                <input type="radio" value="2" name="rating" id="rating2">
+                <label for="rating2" class="fa fa-star"></label>
+                <input type="radio" value="3" name="rating" id="rating3">
+                <label for="rating3" class="fa fa-star"></label>
+                <input type="radio" value="4" name="rating" id="rating4">
+                <label for="rating4" class="fa fa-star"></label>
+                <input checked type="radio" value="5" name="rating" id="rating5">
+                <label for="rating5" class="fa fa-star"></label>
+            </div>
+        </div>
+      
+        <button  type="submit">Comment</button>
         </form>
         <?php endif ?>
+        <?php endif; ?>
                                <h3 id="danhgia" class="box_detail-coment-address_title detail_title">ĐÁNH GIÁ SẢN PHẨM</h3>                    
                                <div class="box_adress box_adress_review">
                                     <div class="review_rate_stars_wrap">
                                         <div class="review_rate_stars_sum">
+                                            <?php if($rating != true):?>
                                             <div>
-                                            <span class="review_rate_stars_store">5</span>  
-                                            <span class="review_rate_stars_store_up"> trên 5</span>
+                                                <span style="font-size:16px" class="review_rate_stars_store">Hãy là người đẩu tiên dánh giá</span>  
+                                            </div>
+                                            <?php else:?>
+                                            <div>
+                                                <span class="review_rate_stars_store"><?php echo rtrim($rating[0],'.0');  ?></span>  
                                             </div>
                                             <div>
                                                 <i class="fas fa-star"></i>
@@ -279,29 +305,28 @@
                                                 <i class="fas fa-star"></i>
                                                 <i class="fas fa-star"></i>
                                             </div>
+                                            <?php endif ?>
+                                         
                                         </div>
                                         <div class="review_rate_filter_wrap">
-                                            <span class="review_rate_filter">
-                                                5 Sao (5)
-                                            </span>
-                                            <span class="review_rate_filter">
-                                                4 Sao (1)
-                                            </span>
-                                            <span class="review_rate_filter">
-                                                3 Sao (0)
-                                            </span>
-                                            <span class="review_rate_filter">
-                                                2 Sao (0)
-                                            </span>
-                                            <span class="review_rate_filter">
-                                                1 Sao (0)
-                                            </span>
-                                            <span class="review_rate_filter">
-                                                Có bình luận (6)
-                                            </span>
-                                            <span class="review_rate_filter">
-                                                Có hình ảnh, video(6)
-                                            </span>
+                                            <a href="index.php?action=home&act=detail&id=<?php echo $_GET['id']; ?>&rating=5"class="review_rate_filter">
+                                                5 Sao (<?php  echo  $md -> countRating($_GET['id'],5); ?>)
+                                            </a>
+                                            <a href="index.php?action=home&act=detail&id=<?php echo $_GET['id']; ?>&rating=4" class="review_rate_filter">
+                                                4 Sao (<?php  echo  $md -> countRating($_GET['id'],4); ?>)
+                                            </a>
+                                            <a href="index.php?action=home&act=detail&id=<?php echo $_GET['id']; ?>&rating=3" class="review_rate_filter">
+                                                3 Sao (<?php  echo  $md -> countRating($_GET['id'],3); ?>)
+                                            </a>
+                                            <a href="index.php?action=home&act=detail&id=<?php echo $_GET['id']; ?>&rating=2" class="review_rate_filter">
+                                                2 Sao (<?php  echo  $md -> countRating($_GET['id'],2); ?>)
+                                            </a>
+                                            <a href="index.php?action=home&act=detail&id=<?php echo $_GET['id']; ?>&rating=1" class="review_rate_filter">
+                                                1 Sao (<?php  echo  $md -> countRating($_GET['id'],1); ?>)
+                                            </a>
+                                            <a href="index.php?action=home&act=detail&id=<?php echo $_GET['id']; ?>" class="review_rate_filter">
+                                                Tất cả bình luận có sao (<?php  echo  $md -> countRating($_GET['id'],null); ?>)
+                                            </a>
                                         </div>
                                     </div>
                     <?php while ($set = $comments->fetch()): ?> 
@@ -313,13 +338,22 @@
                                      
                                         <div class="comment_content_wrap">
                                             <div class="comment_name"><?php echo $set['name'] ?></div>
-                                            <div class="comment_rate">
-                                                <i class="fas fa-star"></i>
-                                                <i class="fas fa-star"></i>
-                                                <i class="fas fa-star"></i>
-                                                <i class="fas fa-star"></i>
-                                                <i class="fas fa-star"></i>
-                                            </div>
+                                            <div class="rating-css a">
+        <div class="star-icon">
+            <?php     
+         ?>
+                <input <?php echo $set['rating'] == 1? 'checked' :''  ?> type="radio" value="1" name="rating<?php echo $set['id'] ?>" id="rating1">
+                <label for="rating1"  class="fa fa-star"></label>
+                <input <?php echo $set['rating'] == 2? 'checked' :''  ?> type="radio" value="2" name="rating<?php echo $set['id'] ?>" id="rating2">
+                <label for="rating2" class="fa fa-star"></label>
+                <input <?php echo $set['rating'] == 3? 'checked' :''  ?> type="radio" value="3" name="rating<?php echo $set['id'] ?>" id="rating3">
+                <label for="rating3" class="fa fa-star"></label>
+                <input <?php echo $set['rating'] == 4? 'checked' :''  ?> type="radio" value="4" name="rating<?php echo $set['id'] ?>" id="rating4">
+                <label for="rating4" class="fa fa-star"></label>
+                <input <?php echo $set['rating'] == 5? 'checked' :''  ?> type="radio" value="5" name="rating<?php echo $set['id'] ?>" id="rating5">
+                <label for="rating5" class="fa fa-star"></label>
+            </div>
+        </div>
                                             <div class="comment_product_size">
                                                 Phân loại hàng: Freesize(38- 62kg)
                                             </div>
@@ -335,7 +369,7 @@
                                             </div>
                                         </div>
                                         <div>
-                                        <button onclick="document.getElementById('comment<?php echo $set['id']?>').style.display='block'">tra loi comment nay</button>
+                                        <button class="btn-comment-mutipal"onclick="document.getElementById('comment<?php echo $set['id']?>').style.display='block'">tra loi</button>
 
 <div style="display:none" id="comment<?php echo $set['id']?>" class="w3-modal">
   <div class="modal-content">
@@ -366,13 +400,6 @@
                                      
                                         <div class="comment_content_wrap">
                                             <div class="comment_name"><?php echo $set2['name'] ?></div>
-                                            <div class="comment_rate">
-                                                <i class="fas fa-star"></i>
-                                                <i class="fas fa-star"></i>
-                                                <i class="fas fa-star"></i>
-                                                <i class="fas fa-star"></i>
-                                                <i class="fas fa-star"></i>
-                                            </div>
                                             <div class="comment_main">
                                                   <?php echo $set2['noidung'] ?>
                                             </div>

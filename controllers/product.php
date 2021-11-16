@@ -51,7 +51,9 @@
         $idkh= $_SESSION['id'];
         $name= $_SESSION['ten'];
         $comment = $_POST['comment'];
-        $product ->addComment($id,$idkh,$name,$comment);
+        $rating= $_POST['rating'];
+  
+        $product ->addComment($id,$idkh,$name,$comment,$rating);
         $render->redirect("index.php?action=home&act=detail&id=$id");
         break;
         case 'addcommentsecond':
